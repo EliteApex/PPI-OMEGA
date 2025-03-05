@@ -52,7 +52,7 @@ class VariationalGAE(VGAE):
 
 
 
-def train(model, data, optimizer, patience=60, delta=0.01, checkpoint_path="best_model.pth", save_csv_path="latent_parameters.csv"):
+def train(model, data, optimizer, version, patience=60, delta=0.01, checkpoint_path="best_model.pth"):
     best_auc = float('-inf')
     counter = 0
     num_epochs = 200
@@ -80,7 +80,8 @@ def train(model, data, optimizer, patience=60, delta=0.01, checkpoint_path="best
         precision_values.append(precision)
         recall_values.append(recall)
 
-        print(f"Epoch {epoch + 1}/{num_epochs} - Loss: {loss:.4f}, AUC: {auc_score:.4f}, AP: {ap_score:.4f}")
+        if ((epoch + 1) % 100 == 0):
+            print(f"Epoch {epoch + 1}/{num_epochs} - Loss: {loss:.4f}, AUC: {auc_score:.4f}, AP: {ap_score:.4f}")
 
         # Save the latent parameters (mu, logstd) for each node in this epoch
         latent_parameters.append({
@@ -105,7 +106,9 @@ def train(model, data, optimizer, patience=60, delta=0.01, checkpoint_path="best
     print(f"Best model restored with AUC: {best_auc:.4f}")
 
     # Save latent parameters to a CSV file
-    save_latent_parameters(latent_parameters, save_csv_path)
+
+    save_csv_path=f"latent_parameters_v{version}.csv"
+    save_latent_parameters(latent_parameters, save_csv_path, version)  # Pass version
 
     # Store metrics in a dictionary
     metrics_dict = {
@@ -116,6 +119,7 @@ def train(model, data, optimizer, patience=60, delta=0.01, checkpoint_path="best
     }
     
     return metrics_dict
+
 
 
 def test(model, data):
@@ -141,16 +145,31 @@ def test(model, data):
     return auc_score, ap_score, precision, recall
 
 
-def save_latent_parameters(latent_parameters, filename):
+def save_latent_parameters(latent_parameters, filename, version):
     """
     Saves the latent space parameters (mu, logstd) for each epoch into a CSV file.
+    Prevents overwriting by appending data for different versions.
     """
     rows = []
     for entry in latent_parameters:
         epoch = entry["epoch"]
         for node_idx, (mu_val, logstd_val) in enumerate(zip(entry["mu"], entry["logstd"])):
-            rows.append({"epoch": epoch, "node": node_idx, "mu": mu_val, "logstd": logstd_val})
+            rows.append({
+                "version": version,  # Add version column
+                "epoch": epoch,
+                "node": node_idx,
+                "mu": mu_val,
+                "logstd": logstd_val
+            })
 
     df = pd.DataFrame(rows)
+
+    # Append to CSV instead of overwriting
+    try:
+        existing_df = pd.read_csv(filename)
+        df = pd.concat([existing_df, df], ignore_index=True)
+    except FileNotFoundError:
+        pass  # File doesn't exist yet, create a new one
+
     df.to_csv(filename, index=False)
-    print(f"Saved latent parameters to {filename}")
+    print(f"Saved latent parameters for version {version} to {filename}")

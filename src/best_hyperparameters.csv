@@ -1,0 +1,2 @@
+dropout,lr,weight_decay
+0.3,0.01,0.0005
