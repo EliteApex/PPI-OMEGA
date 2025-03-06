@@ -30,6 +30,7 @@ def find_common_prefix(strings):
 
 
 # Protein-Protein Interaction Dataset
+## Note: the txt file is too big for us to put on github. It is sourced and unzipped from https://stringdb-downloads.org/download/protein.links.v12.0.txt.gz 
 ppi_data = pd.read_csv('../Data/9606.protein.links.v12.0.txt', sep='\t', names=['link_info'])
 ppi_data = ppi_data.loc[1:]
 ppi_data[['protein1', 'protein2', 'combined_score']] = ppi_data['link_info'].str.split(expand=True)
@@ -45,7 +46,7 @@ filtered_ppi_data.to_csv('../Data/filtered_PPI.csv',index=False)
 
 # RNA-seq Dataset
 ## The data is sourced and unzipped from https://www.proteinatlas.org/download/tsv/rna_tissue_gtex.tsv.zip
-rna_df = pd.read_csv('../Data/rna_tissue_gtex.tsv', sep='\t')
+rna_df = pd.read_csv('../Data/raw/rna_tissue_gtex.tsv', sep='\t')
 rna_df = rna_df[['Gene','Tissue','TPM']] # keep necessary columns
 
 gene_tissue_pivot = rna_df.pivot_table(
@@ -71,7 +72,7 @@ for protein in all_proteins:
 
 protein_gene_conversion = pd.DataFrame(protein_to_gene.keys(),protein_to_gene.values()).reset_index()
 protein_gene_conversion.columns = ['Gene', 'Protein']
-protein_gene_conversion.to_csv('../Data/protein_gene_conversion.csv', index=False)
+protein_gene_conversion.to_csv('../Data/raw/protein_gene_conversion.csv', index=False)
 
 match_feature_mat = gene_tissue_pivot.merge(protein_gene_conversion, on='Gene', how='right')
 print(f"Number of unmatched proteins: {match_feature_mat.amygdala.isna().sum()}")
