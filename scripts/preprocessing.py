@@ -94,7 +94,7 @@ print("Percentage of proteins after preprocessing with proper RNA feature: " + s
 
 # IHC Protein Expression Dataset
 ## The data is sourced and unzipped from https://www.proteinatlas.org/download/tsv/normal_ihc_data.tsv.zip 
-protein_df = pd.read_csv('../Data/normal_ihc_data.tsv', sep='\t')
+protein_df = pd.read_csv('../Data/raw/normal_ihc_data.tsv', sep='\t')
 protein_df.dropna(inplace=True)
 
 ## Encode `Level` column

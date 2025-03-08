@@ -1,22 +1,25 @@
 name: PPIOMEGA_env
 channels:
+  - pyg
+  - pytorch
   - conda-forge
   - defaults
 dependencies:
-  - matplotlib==3.7.5
-
+  - python=3.12
   - numpy=1.26.4
   - pandas=2.2.1
-  - pytorch=2.3.0
-  - torch-geometric=2.6.1
   - scipy=1.13.1
   - scikit-learn=1.5.0
-  - seaborn==0.13.2
+  - seaborn=0.13.2
+  - pytorch=2.3.0
+  - torchvision
+  - torchaudio
   - pip
   - pip:
+      - matplotlib==3.7.5
       - pyensembl==2.3.13
+      - torch-geometric==2.6.1
       - torch-scatter
       - torch-sparse
       - torch-cluster
       - torch-spline-conv
-      
