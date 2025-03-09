@@ -5,7 +5,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.12
+  - python=3.10  # Downgraded for better PyG compatibility
   - numpy=1.26.4
   - pandas=2.2.1
   - scipy=1.13.1
@@ -18,8 +18,3 @@ dependencies:
   - pip:
       - matplotlib==3.7.5
       - pyensembl==2.3.13
-      - torch-geometric==2.6.1
-      - torch-scatter
-      - torch-sparse
-      - torch-cluster
-      - torch-spline-conv
